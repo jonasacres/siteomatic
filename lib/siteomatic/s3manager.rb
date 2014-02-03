@@ -89,6 +89,7 @@ module Siteomatic
 			`#{@cmdPath} -c #{@configFile} ws-create s3://#{bucket}`
 
 			# Upload the site into the S3 bucket
+			#  -F -- follow symlinks
 			#  --rr -- Reduced redundancy (i.e. reduced cost)
 			#  --acl-public -- Files are world-readable
 			#  --exclude=.git* -- Exclude all git files
@@ -98,7 +99,7 @@ module Siteomatic
 			#
 			# Parallel workers uses a forked version of s3cmd, but provide a massive improvement in completion time.
 			@@log.debug("Syncing bucket #{bucket}")
-			`(cd #{directory} && #{@cmdParallelPath} -c #{@configFile} --rr --acl-public --exclude=.git* --delete-removed --parallel --workers=#{@workers} sync . s3://#{bucket})`
+			`(cd #{directory} && #{@cmdParallelPath} -c #{@configFile} -F --rr --acl-public --exclude=.git* --delete-removed --parallel --workers=#{@workers} sync . s3://#{bucket})`
 			self
 		end
 	end
