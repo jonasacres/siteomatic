@@ -1,6 +1,7 @@
 # Siteomatic
 #### Automatic website deployment
 Jonas Acres, jonas@becuddle.com
+https://github.com/jonasacres/siteomatic
 
 ### What does it do?
 Siteomatic automatically deploys static websites to Amazon S3 based on a Github webhook. Sites are bucketed by branch, and domains are managed in Amazon Route 53. For example, you might be working on dev.example.com, and you have just pushed a branch called "reskin-buttons". Siteomatic will create a "reskin-buttons.dev.example.com" domain if it doesn't exist yet, point to Amazon S3, and sync the contents of your branch into the bucket so you have a public link to the site instantly.
