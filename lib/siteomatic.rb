@@ -79,7 +79,7 @@ module Siteomatic
 		# Listens for webhook traffic on HTTP
 		def listenForWebHook()
 			@@log.info("Listening for webhook requests on #{@hostConfig['http_port']}")
-			WebHookListener.run!( {:port => @hostConfig['http_port']} )
+			WebHookListener.run!( {:port => @hostConfig['http_port'], :bind => '0.0.0.0'} )
 
 			# note: WebHookListener.run! blocks
 		end

@@ -6,5 +6,6 @@ gem 'parseconfig'
 gem 'route53'
 gem 'rest-client'
 gem 'sinatra'
+gem 'thin'
 gem 'twilio-ruby'
 
