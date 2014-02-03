@@ -94,7 +94,7 @@ module Siteomatic
 				},
 
 				# Number of worker threads to run in parallel
-				#  30
+				#  '30'
 				"s3cmd_parallel_workers" => {
 					:default => 30,
 					:transform => lambda { |workers| workers.is_a?(String) ? workers.to_i : worker }
@@ -106,6 +106,13 @@ module Siteomatic
 					:mandatory => true,
 					:validate => lambda { |cmd| validateS3cmd(cmd) },
 				},
+
+				# Port number to listen on for HTTP WebHook requests.
+				#  '3310'
+				"http_port" => {
+					:default => 3310,
+					:transform => lambda { |port| port.is_a?(String) ? port.to_i : port }
+				}
 			}
 
 			# First iterate through and ensure we validate every key is set

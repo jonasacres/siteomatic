@@ -74,7 +74,7 @@ module Siteomatic
 		# Upload a branch into an Amazon S3 bucket and configure the domain alias in Route 53
 		def syncBranch(branch)
 			branchCfg = branchConfig(branch)
-			return unless branchCfg["update"] # Skip this branch if we're not supposed to update it
+			return false unless branchCfg["update"] # Skip this branch if we're not supposed to update it
 
 			@@log.info("Syncing #{branch}")
 
@@ -82,30 +82,35 @@ module Siteomatic
 			bucket = bucketForBranchDomain(branch)
 
 			# Current commit hash for our branch
-			hash = @repoManager.commitForBranch(branch)
-			if hash == nil then
+			info = @repoManager.infoForBranch(branch)
+			if info == nil then
 				@@log.fatal("No such branch #{branch}")
-				return
+				return false
 			end
 
-			@@log.info("Branch #{branch}, commit #{hash}")
-			if hash == syncedCommitForBranch(branch) then
+			@@log.info("Branch #{branch}, commit #{info[:hash]} by #{info[:committer]}")
+			if info[:hash] == syncedCommitForBranch(branch) then
 				# This branch is already synced up. No need to duplicate the effort.
 				@@log.info("Previously synced #{branch} to commit #{hash}; skipping.")
-				return
+				return false
 			else
 				@@log.info("Preparing to sync...")
 			end
 
 			# Set up our working directory with the contents of the branch
-			@repoManager.checkout(hash)
+			@repoManager.checkout(info[:hash])
 			@siteomatic.s3Manager.syncSiteFromDirectory(bucket, @repoManager.directory)
 
 			# Set the DNS records
 			@dnsManager.setRecord(bucket, "A", @siteomatic.s3Manager.endpoint, @siteomatic.s3Manager.zoneApex)
-			@dnsManager.setRecord(bucket, "TXT", { :commit => hash, :branch => branch }, nil, 10)
+			@dnsManager.setRecord(bucket, "TXT", { :commit => info[:hash], :branch => branch }, nil, 10)
 
-			@@log.info("Synced #{branch} to commit #{hash}.")
+			@@log.info("Synced #{branch} to commit #{info[:hash]}.")
+
+			@siteomatic.textNotifier.notify(branchCfg["text"], "http://#{bucket} updated by #{info[:committer]}")
+			@siteomatic.emailNotifier.notify(branchCfg["email"], "http://#{bucket} updated", "http://#{bucket} updated to commit #{info[:hash][0..6]} by #{info[:committer]}.")
+
+			return true
 		end
 
 		# Updates the repository with the contents of all remotes, then uploads modified branches to S3.

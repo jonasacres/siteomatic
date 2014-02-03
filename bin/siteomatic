@@ -13,4 +13,4 @@ configFile = ARGV[0] unless ARGV.length <= 0
 siteFile = ARGV[1] unless ARGV.length <= 1
 
 siteomatic = Siteomatic::Siteomatic.new(configFile, siteFile)
-siteomatic.updateAllSites
+siteomatic.listenForWebHook

@@ -1,6 +1,10 @@
 source 'https://rubygems.org'
 
+gem 'json'
 gem 'logger'
-gem 'parsefile'
+gem 'parseconfig'
 gem 'route53'
+gem 'rest-client'
 gem 'sinatra'
+gem 'twilio-ruby'
+

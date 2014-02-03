@@ -30,13 +30,17 @@ module Siteomatic
 			self
 		end
 
-		# Returns the current commit hash for a branch, or nil if the branch is not found
-		def commitForBranch(branch)
-			hash = `(cd #{@directory} ; git log --pretty=format:"%H" -n 1 origin/#{branch})`
-			return nil if hash.start_with?("fatal:")
+		# Returns the current commit hash and committer for a branch, or nil if the branch is not found
+		def infoForBranch(branch)
+			result = `(cd #{@directory} ; git log --pretty=format:"%H %ce" -n 1 origin/#{branch})`
+			return nil if result.start_with?("fatal:")
 
-			@@log.debug("#{@directory} #{branch} -> #{hash}")
-			return hash
+			comps = result.split(' ')
+			info = { :committer => comps[1..-1].join(" "), :hash => comps[0] }
+
+			@@log.debug("#{@directory} #{branch} -> #{info[:hash]} by #{info[:committer]}")
+
+			return info
 		end
 
 		# Returns a list of all branches in the repository, including remote branches
