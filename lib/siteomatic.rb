@@ -24,7 +24,7 @@ module Siteomatic
 
 		@@siteomatic = nil
 		@@log = Logger.new(STDOUT)
-		@@log.level = Logger::DEBUG
+		@@log.level = Logger::INFO
 
 		# Convenience accessor to the Logger instance.
 		def self.log
