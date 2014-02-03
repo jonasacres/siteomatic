@@ -70,7 +70,8 @@ module Siteomatic
 		end
 
 		def generateConfig
-			config = File.read("s3cfg-template")
+			template = File.expand_path(File.dirname(__FILE__) + '/../../res/s3cfg-template')
+			config = File.read(template)
 			config.gsub!(/\$S3_ACCESS_KEY/, @apiKey)
 			config.gsub!(/\$S3_SECRET_KEY/, @apiSecret)
 			File.open(@configFile, 'w') { |f| f.write(config) }
