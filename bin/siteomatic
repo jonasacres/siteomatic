@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+basepath = File.expand_path(File.dirname(__FILE__) + '/..')
+lib = File.join(basepath, 'lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+
+require 'siteomatic'
+
+configFile = File.join(basepath, 'settings.cfg')
+siteFile = File.join(basepath, 'sites.cfg')
+
+configFile = ARGV[0] unless ARGV.length <= 0
+siteFile = ARGV[1] unless ARGV.length <= 1
+
+siteomatic = Siteomatic::Siteomatic.new(configFile, siteFile)
+siteomatic.updateAllSites
