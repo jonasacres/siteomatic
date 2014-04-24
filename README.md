@@ -1,6 +1,6 @@
 # Siteomatic
 #### Automatic website deployment
-Jonas Acres, jonas@becuddle.com
+Jonas Acres, jonas@becuddle.com, @jonasacres on Twitter
 
 https://github.com/jonasacres/siteomatic
 
