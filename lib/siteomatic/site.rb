@@ -90,6 +90,9 @@ module Siteomatic
 
 		# Upload a branch into an Amazon S3 bucket and configure the domain alias in Route 53
 		def syncBranch(branch)
+			puts "Syncing #{directoryForSite}"
+			return true
+
 			branchCfg = branchConfig(branch)
 			return false unless branchCfg["update"] # Skip this branch if we're not supposed to update it
 
@@ -131,7 +134,7 @@ module Siteomatic
 		end
 
 		def directoryForSite
-			return File.join(@repoManager.directory, @siteConfig["documentRoot"]) unless siteConfig["documentRoot"].nil?
+			return File.join(@repoManager.directory, @siteConfig["documentRoot"]) unless @siteConfig["documentRoot"].nil?
 			
 			@repoManager.directory
 		end
