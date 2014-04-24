@@ -22,7 +22,17 @@ module Siteomatic
 		end
 
 		post '/webhook' do
-			contents = JSON.parse(URI.decode(params['payload']))
+			# Github supplies a non-standard request content-type field to help us figure out
+			# if they're supplying a JSON or form-encoded notification.
+			contents = case request.env["CONTENT_TYPE"]
+			when "application/x-www-form-urlencoded"
+				JSON.parse(URI.decode(params['payload']))
+			when "application/json"
+				JSON.parse(request.body.read)
+			else
+				JSON.parse(request.body.read)
+			end
+
 			url = contents["repository"]["url"]
 
 			logger.info("Received webhook notification for #{url}")
