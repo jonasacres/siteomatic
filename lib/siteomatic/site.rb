@@ -71,6 +71,12 @@ module Siteomatic
 			return "#{sanitizeBranch(branch)}.#{@siteConfig['domain']}"
 		end
 
+		# Runs the user-configured script for the branch, if specified.
+		def runScript(branch)
+			branchCfg = branchConfig(branch)
+			`#{branchCfg["script"]}` unless branchCfg["script"].nil?
+		end
+
 		# Get the last synchronized commit for a branch
 		def syncedCommitForBranch(branch)
 			# Get the last synced commit from the TXT record.
@@ -116,6 +122,11 @@ module Siteomatic
 
 			# Set up our working directory with the contents of the branch
 			@repoManager.checkout(info[:hash])
+
+			# Run user script
+			runScript(branch)
+
+			# Upload to S3
 			@siteomatic.s3Manager.syncSiteFromDirectory(bucket, directoryForSite)
 
 			# Set the DNS records
