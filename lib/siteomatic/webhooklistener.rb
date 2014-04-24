@@ -17,6 +17,10 @@
 
 module Siteomatic
 	class WebHookListener < Sinatra::Base
+		get '/version' do
+			"Siteomatic 1.0.0\n"
+		end
+
 		post '/webhook' do
 			contents = JSON.parse(URI.decode(params['payload']))
 			url = contents["repository"]["url"]

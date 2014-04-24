@@ -116,7 +116,7 @@ module Siteomatic
 
 			# Set up our working directory with the contents of the branch
 			@repoManager.checkout(info[:hash])
-			@siteomatic.s3Manager.syncSiteFromDirectory(bucket, @repoManager.directory)
+			@siteomatic.s3Manager.syncSiteFromDirectory(bucket, directoryForSite)
 
 			# Set the DNS records
 			@dnsManager.setRecord(bucket, "A", @siteomatic.s3Manager.endpoint, @siteomatic.s3Manager.zoneApex)
@@ -128,6 +128,12 @@ module Siteomatic
 			@siteomatic.emailNotifier.notify(branchCfg["email"], "http://#{bucket} updated", "http://#{bucket} updated to commit #{info[:hash][0..6]} by #{info[:committer]}.")
 
 			return true
+		end
+
+		def directoryForSite
+			return File.join(@repoManager.directory, @siteConfig["documentRoot"]) unless siteConfig["documentRoot"].nil?
+			
+			@repoManager.directory
 		end
 
 		# Updates the repository with the contents of all remotes, then uploads modified branches to S3.
